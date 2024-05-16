@@ -1,0 +1,6 @@
+{
+    "cmake.sourceDirectory": "/bin/X11",
+    "files.associations": {
+        "user.h": "c"
+    }
+}
