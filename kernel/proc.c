@@ -71,6 +71,7 @@ myproc(void) {
   struct proc *p = c->proc;
   pop_off();
   return p;
+  //int trace_mask;//trace系统调用参数
 }
 
 int
@@ -290,10 +291,14 @@ fork(void)
   np->cwd = idup(p->cwd);
 
   safestrcpy(np->name, p->name, sizeof(p->name));
+  
+  //将trace_mask拷贝到子进程,跟踪参数
+  np->trace_mask=p->trace_mask;
 
   pid = np->pid;
 
   np->state = RUNNABLE;
+
 
   release(&np->lock);
 
@@ -691,5 +696,17 @@ procdump(void)
       state = "???";
     printf("%d %s %s", p->pid, state, p->name);
     printf("\n");
+  }
+}
+
+void
+procnum(uint64 *dst)
+{
+  *dst=0;
+  struct proc *p;
+  for(p=proc;p<&proc[NPROC];p++)
+  {
+    if(p->state!=UNUSED)
+    (*dst)++;
   }
 }

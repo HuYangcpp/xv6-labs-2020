@@ -6,7 +6,7 @@
 #include "memlayout.h"
 #include "spinlock.h"
 #include "proc.h"
-
+#include "sysinfo.h"
 uint64
 sys_exit(void)
 {
@@ -94,4 +94,35 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+uint64
+sys_trace(void)
+{
+  //获取系统调用的参数
+  if( argint(0,&(myproc()->trace_mask))<0)
+  return -1;
+
+  return 0;//将参数保存至proc结构体就可以实现调用
+}
+
+uint64
+sys_sysinfo(void)
+{
+  struct sysinfo info;
+  
+  freebytes(&info.freemem);
+  procnum(&info.nproc);
+  //获取空闲内存和闲进程数
+
+
+  //获取虚拟地址
+  uint64 dstaddr;
+  argaddr(0,&dstaddr);
+  if(copyout(myproc()->pagetable,dstaddr,(char*)&info,sizeof info)<0)
+  {
+    return -1;
+  }
+  return 0;
+  
 }
